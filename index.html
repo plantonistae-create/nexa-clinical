@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111b">
+<title>NEXA Clinical · V0.4 Connected Alpha</title>
+<style>
+:root{
+ --bg:#07111b;--panel:#0d2130;--panel2:#102a3a;--line:rgba(88,225,190,.16);
+ --text:#eff9f8;--muted:#89a5ad;--green:#58e1be;--cyan:#5ac7ff;--amber:#ffc76e;--red:#ff8295;--ok:#7fe3a7;
+ --shadow:0 24px 80px rgba(0,0,0,.35);--r:18px
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{background:
+ radial-gradient(circle at 12% 5%,rgba(88,225,190,.11),transparent 27%),
+ radial-gradient(circle at 92% 8%,rgba(90,199,255,.08),transparent 26%),
+ linear-gradient(145deg,#06101a,#091623 56%,#07111b)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:34px 34px}
+button,input,textarea,select{font:inherit}.hidden{display:none!important}
+.btn{border:1px solid rgba(88,225,190,.24);background:linear-gradient(135deg,var(--green),#7af0d2);color:#05201c;border-radius:10px;padding:10px 13px;font-size:10px;font-weight:800;cursor:pointer}
+.btn.ghost{background:rgba(255,255,255,.025);color:#bed1d3;border-color:var(--line)}.btn:disabled{opacity:.48;cursor:not-allowed}
+.tag{font-size:8px;padding:4px 7px;border-radius:999px;border:1px solid var(--line);color:#83a4aa}
+.notice{padding:10px 11px;border:1px solid var(--line);background:rgba(90,199,255,.025);border-radius:11px;color:#89a7ad;font-size:9px;line-height:1.5}
+.notice.error{border-color:rgba(255,130,149,.22);background:rgba(255,130,149,.045);color:#e7a6b1}
+.notice.ok{border-color:rgba(127,227,167,.2);background:rgba(127,227,167,.04);color:#a3d9b7}
+input{width:100%;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:11px;color:#e8f3f2;padding:11px 12px;outline:none}
+input:focus{border-color:rgba(88,225,190,.38);box-shadow:0 0 0 3px rgba(88,225,190,.05)}
+label{display:block;font-size:8px;color:#6f8b92;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.login{
+ min-height:100vh;display:grid;place-items:center;padding:24px
+}
+.loginCard{
+ width:min(430px,100%);border:1px solid var(--line);background:linear-gradient(145deg,rgba(14,31,46,.94),rgba(8,22,34,.92));
+ border-radius:24px;padding:26px;box-shadow:var(--shadow);backdrop-filter:blur(18px)
+}
+.brand{display:flex;align-items:center;gap:11px;margin-bottom:22px}.logo{width:44px;height:44px;border:1px solid rgba(88,225,190,.25);border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(88,225,190,.2),rgba(90,199,255,.07));color:var(--green);font-size:21px}
+.brand b{letter-spacing:.14em}.brand small{display:block;color:#6d8a91;font-size:9px;margin-top:3px;letter-spacing:.12em}
+.loginCard h1{font-size:24px;letter-spacing:-.035em;margin:0 0 7px}.lead{font-size:10.5px;line-height:1.55;color:var(--muted);margin:0 0 20px}
+.form{display:grid;gap:12px}.actions{display:flex;gap:8px;align-items:center;margin-top:2px}.actions .btn{flex:1}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{height:100vh;position:sticky;top:0;padding:22px 17px;border-right:1px solid var(--line);background:rgba(5,15,24,.93);backdrop-filter:blur(22px)}
+.pilot{margin:0 4px 18px;padding:10px 11px;border-radius:12px;border:1px solid var(--line);background:rgba(88,225,190,.045);font-size:9.5px;color:#8da8ad;line-height:1.5}.pilot strong{color:var(--green)}
+.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#8aa5ab;padding:10px 11px;border-radius:11px;text-align:left;display:flex;gap:10px;align-items:center;font-size:11.5px}.nav button.active{color:#ebffff;background:linear-gradient(90deg,rgba(88,225,190,.11),transparent);box-shadow:inset 2px 0 var(--green)}.ni{width:17px;color:var(--green);text-align:center}
+.main{min-width:0}.top{height:70px;padding:0 30px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:rgba(6,17,27,.5);backdrop-filter:blur(18px);position:sticky;top:0;z-index:5}.crumb{font-size:10px;color:#708e95}.crumb b{color:#cfe0df}.topright{display:flex;gap:8px;align-items:center}
+.chip{padding:6px 9px;border:1px solid var(--line);border-radius:999px;font-size:8.5px;color:#89a6ad;background:rgba(255,255,255,.02)}.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:6px;box-shadow:0 0 10px rgba(127,227,167,.7)}
+.content{padding:26px 30px 50px;max-width:1300px;margin:auto}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px}.eyebrow{font-size:8.5px;color:var(--green);font-weight:800;text-transform:uppercase;letter-spacing:.18em;margin-bottom:8px}h2{font-size:29px;letter-spacing:-.04em;margin:0 0 6px}.hero p{font-size:11.5px;line-height:1.55;color:var(--muted);margin:0;max-width:740px}
+.grid{display:grid;gap:13px}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{border:1px solid var(--line);background:linear-gradient(145deg,rgba(15,34,49,.82),rgba(10,25,38,.75));border-radius:var(--r);padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(16px)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.head h3{font-size:12px;margin:0}
+.metric label{display:block;color:#6c8a91;font-size:8px;text-transform:uppercase;letter-spacing:.12em}.metric strong{display:block;font-size:27px;margin:11px 0 2px;letter-spacing:-.04em}.metric small{color:#607d84;font-size:8.5px}
+.info{padding:10px 11px;border-radius:11px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.035);margin-top:8px}.info label{margin:0 0 4px}.info span{font-size:10px;color:#bed0d2;word-break:break-word}
+.orgCreate{display:grid;gap:10px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.footerNote{font-size:8.5px;color:#617e85;line-height:1.5;margin-top:14px}
+@media(max-width:900px){.g3,.g2{grid-template-columns:1fr}.app{grid-template-columns:1fr}.side{height:auto;position:relative;border-right:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(3,1fr)}.nav button{justify-content:center}.nav button span:last-child{display:none}.top{padding:0 14px}.content{padding:20px 14px}.hero{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+
+<section id="loginGate" class="login">
+  <div class="loginCard">
+    <div class="brand"><div class="logo">✦</div><div><b>NEXA</b><small>CLINICAL · V0.4 CONNECTED</small></div></div>
+    <h1>Entrar no ambiente piloto</h1>
+    <p class="lead">Autenticação real do novo Supabase comercial. Cadastro público continua desabilitado; somente usuários autorizados no piloto entram.</p>
+
+    <div class="form">
+      <div><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" placeholder="seu@email.com"></div>
+      <div><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div class="actions"><button id="loginBtn" class="btn">Entrar</button></div>
+      <div id="loginMsg"></div>
+    </div>
+
+    <div class="footerNote">V0.4: valida Auth + pilot_access + organização. Ainda não use dados reais de pacientes.</div>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+  <aside class="side">
+    <div class="brand"><div class="logo">✦</div><div><b>NEXA</b><small>CLINICAL · V0.4</small></div></div>
+    <div class="pilot"><strong>CONNECTED ALPHA</strong><br>Auth e banco reais. Dados clínicos ainda permanecem desabilitados até concluirmos os testes de RLS.</div>
+    <div class="nav">
+      <button class="active"><span class="ni">⌂</span><span>Fundação</span></button>
+      <button disabled><span class="ni">◎</span><span>Pacientes</span></button>
+      <button disabled><span class="ni">●</span><span>Atendimentos</span></button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div class="crumb"><b>NEXA Clinical</b> / Fundação segura</div>
+      <div class="topright">
+        <span class="chip"><span class="dot"></span><span id="sessionChip">Sessão autenticada</span></span>
+        <button id="logoutBtn" class="btn ghost">Sair</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Fase 1 · conexão real</div>
+          <h2 id="welcome">Fundação do piloto</h2>
+          <p>Esta etapa valida autenticação, autorização no piloto, perfil e organização antes de liberarmos pacientes e prontuário.</p>
+        </div>
+        <span id="pilotTag" class="tag">checando piloto…</span>
+      </div>
+
+      <div class="grid g3">
+        <div class="card metric"><label>Autenticação</label><strong style="color:var(--green)">OK</strong><small id="authEmail">—</small></div>
+        <div class="card metric"><label>Pilot access</label><strong id="pilotValue">…</strong><small>Controle explícito de usuários</small></div>
+        <div class="card metric"><label>Organização</label><strong id="orgValue">…</strong><small id="orgHint">Consultando membership</small></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:13px">
+        <div class="card">
+          <div class="head"><h3>Conta autenticada</h3><span class="tag">Supabase Auth</span></div>
+          <div class="info"><label>Nome</label><span id="profileName">—</span></div>
+          <div class="info"><label>E-mail</label><span id="profileEmail">—</span></div>
+          <div class="info"><label>User UUID</label><span id="profileId" class="mono">—</span></div>
+        </div>
+
+        <div class="card">
+          <div class="head"><h3>Organização do piloto</h3><span id="orgStatusTag" class="tag">checando…</span></div>
+          <div id="orgExisting" class="hidden">
+            <div class="info"><label>Organização</label><span id="orgName">—</span></div>
+            <div class="info"><label>Role</label><span id="orgRole">—</span></div>
+            <div class="info"><label>Organization UUID</label><span id="orgId" class="mono">—</span></div>
+          </div>
+
+          <div id="orgMissing" class="orgCreate hidden">
+            <div class="notice">Nenhuma organização encontrada para este usuário. Crie a primeira organização comercial do piloto.</div>
+            <div><label for="orgInput">Nome</label><input id="orgInput" value="NEXA Pilot"></div>
+            <button id="createOrgBtn" class="btn">Criar organização e me tornar owner</button>
+            <div id="orgMsg"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:13px">
+        <div class="head"><h3>Estado da Fase 1</h3><span class="tag">RLS-first</span></div>
+        <div id="phaseMsg" class="notice">Inicializando…</div>
+        <div class="footerNote">Quando Auth + pilot_access + organization membership estiverem verdes, o próximo passo será testar isolamento com uma segunda organização antes de conectar pacientes.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+'use strict';
+(async function(){
+  const SUPABASE_URL = 'https://agpvibmrlprkshelmpnx.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_FMDvDsXRIvo4Y1QLPYuY8A_zwb40q-y';
+
+  const $ = id => document.getElementById(id);
+
+  function msg(target, text, type=''){
+    target.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'notice' + (type ? ' ' + type : '');
+    d.textContent = text;
+    target.appendChild(d);
+  }
+
+  async function loadScript(src){
+    return new Promise((resolve,reject)=>{
+      const s=document.createElement('script');
+      s.src=src;s.async=true;s.onload=resolve;s.onerror=()=>reject(new Error('Falha ao carregar biblioteca externa.'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensureSupabase(){
+    if(window.supabase?.createClient) return;
+    const cdns=[
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
+      'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js'
+    ];
+    let last;
+    for(const src of cdns){
+      try{ await loadScript(src); if(window.supabase?.createClient) return; }
+      catch(e){ last=e; }
+    }
+    throw last || new Error('Não foi possível carregar o Supabase JS.');
+  }
+
+  try{
+    await ensureSupabase();
+  }catch(e){
+    msg($('loginMsg'),'Não foi possível carregar a biblioteca do Supabase. Verifique a conexão e recarregue.', 'error');
+    return;
+  }
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+  });
+
+  let currentSession=null;
+
+  async function fetchFoundation(session){
+    currentSession=session;
+    const user=session.user;
+    $('authEmail').textContent=user.email || '—';
+    $('profileEmail').textContent=user.email || '—';
+    $('profileId').textContent=user.id;
+
+    const [{data:profile,error:profileErr},{data:pilot,error:pilotErr},{data:members,error:memberErr}] = await Promise.all([
+      sb.from('profiles').select('display_name,crm,specialty').eq('id',user.id).maybeSingle(),
+      sb.from('pilot_access').select('enabled,notes').eq('user_id',user.id).maybeSingle(),
+      sb.from('organization_members')
+        .select('organization_id,role,is_active,organizations(id,name)')
+        .eq('user_id',user.id)
+        .eq('is_active',true)
+    ]);
+
+    if(profileErr) throw profileErr;
+    if(pilotErr) throw pilotErr;
+    if(memberErr) throw memberErr;
+
+    const displayName = profile?.display_name || user.user_metadata?.display_name || (user.email ? user.email.split('@')[0] : 'Profissional');
+    $('profileName').textContent=displayName;
+    $('welcome').textContent='Olá, ' + displayName + '.';
+
+    if(!pilot?.enabled){
+      $('pilotValue').textContent='NÃO';
+      $('pilotValue').style.color='var(--red)';
+      $('pilotTag').textContent='não autorizado';
+      $('phaseMsg').className='notice error';
+      $('phaseMsg').textContent='Conta autenticada, mas não autorizada no pilot_access. O aplicativo permanecerá bloqueado.';
+      $('orgMissing').classList.add('hidden');
+      $('orgExisting').classList.add('hidden');
+      return;
+    }
+
+    $('pilotValue').textContent='OK';
+    $('pilotValue').style.color='var(--green)';
+    $('pilotTag').textContent='piloto autorizado';
+
+    const member=(members||[])[0];
+    if(member?.organization_id){
+      const org = member.organizations || {};
+      $('orgValue').textContent='OK';
+      $('orgValue').style.color='var(--green)';
+      $('orgHint').textContent=org.name || 'Membership ativo';
+      $('orgStatusTag').textContent='ativa';
+      $('orgExisting').classList.remove('hidden');
+      $('orgMissing').classList.add('hidden');
+      $('orgName').textContent=org.name || '—';
+      $('orgRole').textContent=member.role || '—';
+      $('orgId').textContent=member.organization_id;
+      $('phaseMsg').className='notice ok';
+      $('phaseMsg').textContent='Auth ✓  Pilot access ✓  Organização ✓  Membership ✓. Fundação inicial pronta para o teste de isolamento RLS.';
+    }else{
+      $('orgValue').textContent='—';
+      $('orgHint').textContent='Ainda não criada';
+      $('orgStatusTag').textContent='necessária';
+      $('orgExisting').classList.add('hidden');
+      $('orgMissing').classList.remove('hidden');
+      $('phaseMsg').className='notice';
+      $('phaseMsg').textContent='Auth ✓  Pilot access ✓. Falta criar a primeira organização do piloto.';
+    }
+  }
+
+  async function enter(session){
+    $('loginGate').classList.add('hidden');
+    $('app').classList.remove('hidden');
+    try{
+      await fetchFoundation(session);
+    }catch(e){
+      $('phaseMsg').className='notice error';
+      $('phaseMsg').textContent='Erro ao carregar fundação: ' + (e.message || e);
+    }
+  }
+
+  async function login(){
+    const email=$('email').value.trim().toLowerCase();
+    const password=$('password').value;
+    if(!email || !password){ msg($('loginMsg'),'Informe e-mail e senha.', 'error'); return; }
+    $('loginBtn').disabled=true;
+    $('loginBtn').textContent='Conectando…';
+    msg($('loginMsg'),'Validando credenciais…');
+    try{
+      const {data,error}=await sb.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      if(!data?.session) throw new Error('Sessão não retornada.');
+      msg($('loginMsg'),'Login confirmado.', 'ok');
+      await enter(data.session);
+    }catch(e){
+      msg($('loginMsg'), e.message || 'Não foi possível entrar.', 'error');
+    }finally{
+      $('loginBtn').disabled=false;
+      $('loginBtn').textContent='Entrar';
+    }
+  }
+
+  $('loginBtn').addEventListener('click', login);
+  $('password').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+
+  $('logoutBtn').addEventListener('click', async()=>{
+    await sb.auth.signOut();
+    currentSession=null;
+    $('app').classList.add('hidden');
+    $('loginGate').classList.remove('hidden');
+    $('password').value='';
+    $('loginMsg').innerHTML='';
+  });
+
+  $('createOrgBtn').addEventListener('click', async()=>{
+    if(!currentSession) return;
+    const orgName=$('orgInput').value.trim();
+    if(orgName.length<2){ msg($('orgMsg'),'Informe um nome válido.', 'error'); return; }
+    $('createOrgBtn').disabled=true;
+    $('createOrgBtn').textContent='Criando…';
+    msg($('orgMsg'),'Criando organização pelo usuário autenticado…');
+    try{
+      const {data,error}=await sb.rpc('create_organization',{org_name:orgName});
+      if(error) throw error;
+      msg($('orgMsg'),'Organização criada. UUID: '+data, 'ok');
+      await fetchFoundation(currentSession);
+    }catch(e){
+      msg($('orgMsg'),e.message || 'Falha ao criar organização.', 'error');
+    }finally{
+      $('createOrgBtn').disabled=false;
+      $('createOrgBtn').textContent='Criar organização e me tornar owner';
+    }
+  });
+
+  const {data:{session}}=await sb.auth.getSession();
+  if(session) await enter(session);
+
+  sb.auth.onAuthStateChange((event,session)=>{
+    if(event==='SIGNED_IN' && session && !currentSession){
+      setTimeout(()=>enter(session),0);
+    }
+    if(event==='SIGNED_OUT'){
+      currentSession=null;
+      $('app').classList.add('hidden');
+      $('loginGate').classList.remove('hidden');
+    }
+  });
+})();
+</script>
+</body>
+</html>
